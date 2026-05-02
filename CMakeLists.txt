@@ -60,3 +60,54 @@ if(NOT EXISTS "${STB_DIR}/stb_image.h")
         "${STB_DIR}/stb_image.h"
     )
 endif()
+
+# Copy logos to build directory so the executable can find them at runtime
+configure_file(
+    "${CMAKE_SOURCE_DIR}/../StructForce.png"
+    "${CMAKE_BINARY_DIR}/logo_light.png"
+    COPYONLY
+)
+configure_file(
+    "${CMAKE_SOURCE_DIR}/../Struct.png"
+    "${CMAKE_BINARY_DIR}/logo_dark.png"
+    COPYONLY
+)
+
+add_executable(StructForce ${APP_SOURCES} ${IMGUI_SOURCES})
+
+target_compile_definitions(StructForce PRIVATE
+    APP_FONT_PATH="${imgui_SOURCE_DIR}/misc/fonts/Roboto-Medium.ttf"
+    LOGO_LIGHT_PATH="${CMAKE_BINARY_DIR}/logo_light.png"
+    LOGO_DARK_PATH="${CMAKE_BINARY_DIR}/logo_dark.png"
+)
+
+target_include_directories(StructForce PRIVATE "${STB_DIR}")
+
+target_include_directories(StructForce PRIVATE
+    include/
+    ${imgui_SOURCE_DIR}
+    ${imgui_SOURCE_DIR}/backends
+)
+
+target_link_libraries(StructForce PRIVATE
+    glfw
+    OpenGL::GL
+)
+
+if(APPLE)
+    target_link_libraries(StructForce PRIVATE
+        "-framework Cocoa"
+        "-framework IOKit"
+        "-framework CoreVideo"
+    )
+    target_compile_definitions(StructForce PRIVATE GL_SILENCE_DEPRECATION)
+endif()
+
+if(MSVC)
+    target_compile_options(StructForce PRIVATE /MP)
+endif()
+
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
+endif()
+
