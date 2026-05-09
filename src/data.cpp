@@ -61,3 +61,37 @@ bool addContact(ContactStore& store,
     store.count++;
     return true;
 }
+bool removeContact(ContactStore& store, int id) {
+    int idx = findIndex(store, id);
+    if (idx < 0) return false;
+
+    // Shift contacts after idx one position left to fill the gap
+    for (int i = idx; i < store.count - 1; i++) {
+        store.contacts[i] = store.contacts[i + 1];
+    }
+    store.count--;
+    return true;
+}
+
+bool updateContact(ContactStore& store, int id,
+                   const char* name, const char* phone,
+                   const char* email, const char* group) {
+    int idx = findIndex(store, id);
+    if (idx < 0) return false;
+
+    Contact& c = store.contacts[idx];
+    safeCopy(c.name,  name,  MAX_NAME_LEN);
+    safeCopy(c.phone, phone, MAX_PHONE_LEN);
+    safeCopy(c.email, email ? email : "", MAX_EMAIL_LEN);
+    safeCopy(c.group, (group && group[0]) ? group : "General", MAX_GROUP_LEN);
+    return true;
+}
+
+const Contact* getContacts(const ContactStore& store) {
+    return store.contacts;
+}
+
+int getContactCount(const ContactStore& store) {
+    return store.count;
+}
+
