@@ -70,3 +70,84 @@ int main() {
     ImGui::CreateContext();
 
     ImGuiIO& io = ImGui::GetIO();
+     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    io.IniFilename  = nullptr;
+
+    // Load Roboto at 2x for Retina displays, then scale back down
+    float xscale = 1.f;
+    glfwGetWindowContentScale(window, &xscale, nullptr);
+    io.Fonts->AddFontFromFileTTF(APP_FONT_PATH, 15.5f * xscale);
+    io.FontGlobalScale = 1.f / xscale;
+
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init(glslVersion);
+
+    // ── Application data
+    ContactStore store;
+    AppState     state;
+    UserStore    users;
+
+    loadUserStore(users);
+    initContactStore(store);
+    initAppState(state);
+    applyTheme(state.darkMode);
+    invalidateSort(state);
+    loadLogo(LOGO_LIGHT_PATH, LOGO_DARK_PATH);
+
+    double lastTime = glfwGetTime();
+
+    while (!glfwWindowShouldClose(window)) {
+        glfwPollEvents();
+
+        double now       = glfwGetTime();
+        float  deltaTime = (float)(now - lastTime);
+        lastTime         = now;
+
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+        // Full-screen root window
+        ImGuiViewport* vp = ImGui::GetMainViewport();
+        ImGui::SetNextWindowPos(vp->Pos);
+        ImGui::SetNextWindowSize(vp->Size);
+
+        ImGuiWindowFlags rootFlags =
+            ImGuiWindowFlags_NoTitleBar    | ImGuiWindowFlags_NoCollapse  |
+            ImGuiWindowFlags_NoResize      | ImGuiWindowFlags_NoMove      |
+            ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNav |
+            ImGuiWindowFlags_NoScrollbar   | ImGuiWindowFlags_NoBackground;
+
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding,  {0.f, 0.f});
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.f);
+        ImGui::Begin("##root", nullptr, rootFlags);
+        ImGui::PopStyleVar(2);
+
+        renderApp(state, store, users);
+        renderNotification(state, deltaTime);
+
+        ImGui::End();
+
+        ImGui::Render();
+
+        int displayW, displayH;
+        glfwGetFramebufferSize(window, &displayW, &displayH);
+        glViewport(0, 0, displayW, displayH);
+        glClearColor(C_BG_BASE.x, C_BG_BASE.y, C_BG_BASE.z, 1.f);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        glfwSwapBuffers(window);
+    }
+
+    if (state.loggedInUserId >= 0)
+        saveContactsForUser(state.loggedInUserId, store);
+
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+    glfwDestroyWindow(window);
+    glfwTerminate();
+
+    return 0;
+}
