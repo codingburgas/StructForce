@@ -118,3 +118,61 @@ void renderAuthView(AppState& st, ContactStore& store, UserStore& users) {
             ImGui::SetWindowFontScale(1.f);
         }
     }
+
+    ImGui::Dummy({0.f, fs * 2.0f});
+
+    // Tagline — two lines, centered
+    {
+        ImGui::SetWindowFontScale(1.65f);
+        const char* t1 = "Your contacts,";
+        ImGui::SetCursorPosX((LEFT_W - ImGui::CalcTextSize(t1).x) * 0.5f);
+        ImGui::TextColored(C_TEXT_PRI, "%s", t1);
+        const char* t2 = "organized.";
+        ImGui::SetCursorPosX((LEFT_W - ImGui::CalcTextSize(t2).x) * 0.5f);
+        ImGui::TextColored(C_ACCENT, "%s", t2);
+        ImGui::SetWindowFontScale(1.f);
+    }
+
+    ImGui::Dummy({0.f, fs * 2.5f});
+
+    // Feature bullets
+    const char* bullets[] = {
+        "Add & manage contacts easily",
+        "Search, sort and filter instantly",
+        "Group contacts by category",
+        "Analytics at a glance",
+    };
+    float bx   = LEFT_W * 0.12f;
+    float dotR = fs * 0.28f;
+    for (const char* text : bullets) {
+        ImVec2 tp = ImGui::GetCursorScreenPos();
+        ldl->AddCircleFilled(
+            {lwp.x + bx + dotR, tp.y + fs * 0.52f},
+            dotR, toU32(C_ACCENT), 16);
+        ImGui::SetCursorPosX(bx + dotR * 2.f + fs * 0.8f);
+        ImGui::TextColored(C_TEXT_SEC, "%s", text);
+        ImGui::Dummy({0.f, fs * 0.6f});
+    }
+
+    ImGui::EndChild();
+    ImGui::PopStyleColor();
+
+    ImGui::SameLine(0, 0);
+
+    // ── Right panel — form ────────────────────────────────────────────────────
+    ImGui::PushStyleColor(ImGuiCol_ChildBg, C_BG_BASE);
+    ImGui::BeginChild("##authRight", {RIGHT_W, winH}, false,
+                      ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+
+    // Form sizing — fixed pixel width, centered
+    const float FORM_W   = (RIGHT_W - 80.f < 340.f) ? RIGHT_W - 80.f : 340.f;
+    const float FORM_PAD = (RIGHT_W - FORM_W) * 0.5f;
+
+    // Vertical centering: sit slightly above center
+    float formH = (st.authScreen == AUTH_LOGIN) ? winH * 0.44f : winH * 0.66f;
+    float formY = (winH - formH) * 0.38f;
+    if (formY < 24.f) formY = 24.f;
+    ImGui::SetCursorPos({FORM_PAD, formY});
+
+    ImGui::BeginGroup();
+    float innerW = FORM_W;
