@@ -56,3 +56,65 @@ static void fieldLabel(const char* label, bool required = false) {
     }
     ImGui::Dummy({0.f, 4.f});
 }
+
+static void pushInputStyle() {
+    ImGui::PushStyleColor(ImGuiCol_FrameBg, C_BG_ELEVATED);
+    ImGui::PushStyleColor(ImGuiCol_Border,  C_BORDER);
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, {12.f, 10.f});
+}
+static void popInputStyle() {
+    ImGui::PopStyleVar();
+    ImGui::PopStyleColor(2);
+}
+
+void renderAuthView(AppState& st, ContactStore& store, UserStore& users) {
+    float winW = ImGui::GetContentRegionAvail().x;
+    float winH = ImGui::GetContentRegionAvail().y;
+
+    const float LEFT_W = winW * 0.44f;
+    const float RIGHT_W = winW - LEFT_W;
+
+    // ── Left panel — branding ─────────────────────────────────────────────────
+    ImGui::PushStyleColor(ImGuiCol_ChildBg, C_BG_PANEL);
+    ImGui::BeginChild("##authLeft", {LEFT_W, winH}, false,
+                      ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+
+    ImDrawList* ldl = ImGui::GetWindowDrawList();
+    ImVec2 lwp = ImGui::GetWindowPos();
+
+    // Accent stripe at top
+    ldl->AddRectFilled(lwp, {lwp.x + LEFT_W, lwp.y + 3.f}, toU32(C_ACCENT));
+
+    // Subtle right border
+    ldl->AddLine({lwp.x + LEFT_W - 1.f, lwp.y},
+                 {lwp.x + LEFT_W - 1.f, lwp.y + winH}, toU32(C_BORDER));
+
+    float fs = ImGui::GetFontSize();
+
+    // Logo: use most of the left panel width so it scales up properly
+    float logoMaxW = LEFT_W * 0.82f;
+    float logoMaxH = winH * 0.22f;   // allow up to 22% of height
+
+    // Start at ~10% from top
+    float startY = winH * 0.10f;
+    ImGui::SetCursorPosY(startY);
+
+    // Logo
+    {
+        unsigned int tex = st.darkMode ? g_logoDarkTexture : g_logoTexture;
+        int srcW = st.darkMode ? g_logoDarkW : g_logoW;
+        int srcH = st.darkMode ? g_logoDarkH : g_logoH;
+        if (tex && srcW > 0 && srcH > 0) {
+            float lw = logoMaxW;
+            float lh = lw * (float)srcH / (float)srcW;
+            if (lh > logoMaxH) { lh = logoMaxH; lw = lh * (float)srcW / (float)srcH; }
+            ImGui::SetCursorPosX((LEFT_W - lw) * 0.5f);
+            ImGui::Image((ImTextureID)(intptr_t)tex, {lw, lh});
+        } else {
+            ImGui::SetWindowFontScale(2.5f);
+            float tw = ImGui::CalcTextSize("StructForce").x;
+            ImGui::SetCursorPosX((LEFT_W - tw) * 0.5f);
+            ImGui::TextColored(C_ACCENT, "StructForce");
+            ImGui::SetWindowFontScale(1.f);
+        }
+    }
