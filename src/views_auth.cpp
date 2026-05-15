@@ -242,3 +242,49 @@ void renderAuthView(AppState& st, ContactStore& store, UserStore& users) {
         ImGui::Dummy({0.f, 2.f});
         ImGui::TextColored(C_TEXT_SEC, "Join StructForce today");
         ImGui::Dummy({0.f, 24.f});
+
+        // Error
+        errorBanner(st.authError);
+
+        // First + Last name
+        float halfW = (innerW - 8.f) * 0.5f;
+        ImGui::TextColored(C_TEXT_SEC, "First name");
+        ImGui::SameLine(halfW + 8.f);
+        ImGui::TextColored(C_TEXT_SEC, "Last name");
+        ImGui::Dummy({0.f, 4.f});
+        pushInputStyle();
+        ImGui::SetNextItemWidth(halfW);
+        ImGui::InputText("##sfname", st.authFirstName, MAX_FNAME_LEN);
+        ImGui::SameLine(0, 8.f);
+        ImGui::SetNextItemWidth(halfW);
+        ImGui::InputText("##slname", st.authLastName, MAX_LNAME_LEN);
+        popInputStyle();
+        ImGui::Dummy({0.f, 12.f});
+
+        // Email
+        fieldLabel("Email address", true);
+        ImGui::SetNextItemWidth(innerW);
+        pushInputStyle();
+        ImGui::InputText("##semail", st.authEmail, MAX_UMAIL_LEN);
+        popInputStyle();
+        ImGui::Dummy({0.f, 12.f});
+
+        // Date of birth
+        fieldLabel("Date of birth");
+        ImGui::SetNextItemWidth(innerW);
+        pushInputStyle();
+        ImGui::InputText("##sbdate", st.authBirthDate, MAX_BDATE_LEN);
+        if (st.authBirthDate[0] == '\0' && !ImGui::IsItemActive()) {
+            ImVec2 mn = ImGui::GetItemRectMin();
+            ImVec2 mx = ImGui::GetItemRectMax();
+            ImGui::GetWindowDrawList()->AddText(
+                {mn.x + 12.f, mn.y + (mx.y - mn.y - ImGui::GetFontSize()) * 0.5f},
+                toU32(C_TEXT_DIS), "DD.MM.YYYY");
+        }
+        popInputStyle();
+        ImGui::Dummy({0.f, 12.f});
+
+        // Password
+        fieldLabel("Password", true);
+        ImGui::SetNextItemWidth(innerW);
+        pushInputStyle();
