@@ -288,3 +288,50 @@ void renderAuthView(AppState& st, ContactStore& store, UserStore& users) {
         fieldLabel("Password", true);
         ImGui::SetNextItemWidth(innerW);
         pushInputStyle();
+                ImGui::InputText("##spass", st.authPassword, MAX_PASS_LEN,
+                         ImGuiInputTextFlags_Password);
+        popInputStyle();
+        ImGui::Dummy({0.f, 4.f});
+        ImGui::TextColored(C_TEXT_DIS, "  At least 6 characters");
+        ImGui::Dummy({0.f, 16.f});
+
+        // Create Account button
+        if (accentBtn("Create Account", {innerW, 40.f})) {
+            const char* err = registerUser(users,
+                st.authFirstName, st.authLastName,
+                st.authEmail, st.authBirthDate, st.authPassword);
+            if (err) {
+                st.authError = err;
+            } else {
+                const User* u = loginUser(users, st.authEmail, st.authPassword);
+                if (u) {
+                    st.loggedInUserId    = u->id;
+                    st.authError         = nullptr;
+                    initContactStore(store);
+                    invalidateSort(st);
+                    st.activeView        = VIEW_CONTACTS;
+                    st.selectedContactId = -1;
+                    st.searchQuery[0]    = '\0';
+                    st.authFirstName[0]  = st.authLastName[0] = '\0';
+                    st.authEmail[0]      = st.authBirthDate[0] = '\0';
+                    st.authPassword[0]   = '\0';
+                }
+            }
+        }
+
+        ImGui::Dummy({0.f, 16.f});
+        hDivider();
+        ImGui::Dummy({0.f, 12.f});
+
+        // Link
+        const char* q  = "Already have an account? ";
+        const char* lk = "Sign in";
+        ImGui::TextColored(C_TEXT_SEC, "%s", q);
+        ImGui::SameLine(0, 0);
+        if (linkText(lk)) { st.authScreen = AUTH_LOGIN; st.authError = nullptr; }
+    }
+
+    ImGui::EndGroup();
+    ImGui::EndChild();
+    ImGui::PopStyleColor();
+}
