@@ -176,3 +176,69 @@ void renderAuthView(AppState& st, ContactStore& store, UserStore& users) {
 
     ImGui::BeginGroup();
     float innerW = FORM_W;
+
+     if (st.authScreen == AUTH_LOGIN) {
+        // Title
+        ImGui::SetWindowFontScale(1.5f);
+        ImGui::TextColored(C_TEXT_PRI, "Welcome back");
+        ImGui::SetWindowFontScale(1.f);
+        ImGui::Dummy({0.f, 2.f});
+        ImGui::TextColored(C_TEXT_SEC, "Sign in to your account");
+        ImGui::Dummy({0.f, 24.f});
+
+        // Error
+        errorBanner(st.authError);
+
+        // Email
+        fieldLabel("Email", true);
+        ImGui::SetNextItemWidth(innerW);
+        pushInputStyle();
+        ImGui::InputText("##lemail", st.authEmail, MAX_UMAIL_LEN);
+        popInputStyle();
+        ImGui::Dummy({0.f, 12.f});
+
+        // Password
+        fieldLabel("Password", true);
+        ImGui::SetNextItemWidth(innerW);
+        pushInputStyle();
+        ImGui::InputText("##lpass", st.authPassword, MAX_PASS_LEN,
+                         ImGuiInputTextFlags_Password);
+        popInputStyle();
+        ImGui::Dummy({0.f, 20.f});
+
+        // Sign In button
+        if (accentBtn("Sign In", {innerW, 40.f})) {
+            const User* u = loginUser(users, st.authEmail, st.authPassword);
+            if (u) {
+                st.loggedInUserId    = u->id;
+                st.authError         = nullptr;
+                loadContactsForUser(u->id, store);
+                invalidateSort(st);
+                st.activeView        = VIEW_CONTACTS;
+                st.authPassword[0]   = '\0';
+                st.selectedContactId = -1;
+                st.searchQuery[0]    = '\0';
+            } else {
+                st.authError = "Invalid email or password.";
+            }
+        }
+
+        ImGui::Dummy({0.f, 20.f});
+        hDivider();
+        ImGui::Dummy({0.f, 14.f});
+
+        // Link
+        const char* q  = "Don't have an account? ";
+        const char* lk = "Create one";
+        ImGui::TextColored(C_TEXT_SEC, "%s", q);
+        ImGui::SameLine(0, 0);
+        if (linkText(lk)) { st.authScreen = AUTH_SIGNUP; st.authError = nullptr; }
+
+    } else {
+        // Title
+        ImGui::SetWindowFontScale(1.5f);
+        ImGui::TextColored(C_TEXT_PRI, "Create your account");
+        ImGui::SetWindowFontScale(1.f);
+        ImGui::Dummy({0.f, 2.f});
+        ImGui::TextColored(C_TEXT_SEC, "Join StructForce today");
+        ImGui::Dummy({0.f, 24.f});
