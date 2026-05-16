@@ -1,5 +1,7 @@
-// user account management and binary file persistence
- 
+/*
+ * auth.cpp
+ * Auth Layer — user account management and binary file persistence.
+ */
 
 #include "auth.h"
 #include <cstdio>

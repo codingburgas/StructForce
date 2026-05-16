@@ -3,7 +3,7 @@
  * Data Layer — StructForce Contact Management System
  *
  * Implements raw storage operations for contacts.
- * No algorithm logic, no UI code  pure data handling only.
+ * No algorithm logic, no UI code — pure data handling only.
  */
 
 #include "data.h"
@@ -61,6 +61,7 @@ bool addContact(ContactStore& store,
     store.count++;
     return true;
 }
+
 bool removeContact(ContactStore& store, int id) {
     int idx = findIndex(store, id);
     if (idx < 0) return false;

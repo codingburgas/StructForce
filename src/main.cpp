@@ -1,4 +1,10 @@
 /*
+ * main.cpp
+ * StructForce — Contact Management System
+ *
+ * Entry point: initializes GLFW + OpenGL 3.3 + Dear ImGui,
+ * then runs the render loop.
+ *
  * Layer usage in main():
  *   Logic layer:        loadSampleContacts (via data layer), initAppState
  *   Presentation layer: applyTheme, renderApp, renderNotification
@@ -70,7 +76,7 @@ int main() {
     ImGui::CreateContext();
 
     ImGuiIO& io = ImGui::GetIO();
-     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     io.IniFilename  = nullptr;
 
     // Load Roboto at 2x for Retina displays, then scale back down

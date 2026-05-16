@@ -78,8 +78,3 @@ const Contact* getContacts(const ContactStore& store);
  */
 int getContactCount(const ContactStore& store);
 
-/*
- * Populate store with 12 realistic sample contacts for demonstration
- * Clears any existing data first
- */
-void loadSampleContacts(ContactStore& store);

@@ -177,7 +177,7 @@ void renderAuthView(AppState& st, ContactStore& store, UserStore& users) {
     ImGui::BeginGroup();
     float innerW = FORM_W;
 
-     if (st.authScreen == AUTH_LOGIN) {
+    if (st.authScreen == AUTH_LOGIN) {
         // Title
         ImGui::SetWindowFontScale(1.5f);
         ImGui::TextColored(C_TEXT_PRI, "Welcome back");
@@ -288,7 +288,7 @@ void renderAuthView(AppState& st, ContactStore& store, UserStore& users) {
         fieldLabel("Password", true);
         ImGui::SetNextItemWidth(innerW);
         pushInputStyle();
-                ImGui::InputText("##spass", st.authPassword, MAX_PASS_LEN,
+        ImGui::InputText("##spass", st.authPassword, MAX_PASS_LEN,
                          ImGuiInputTextFlags_Password);
         popInputStyle();
         ImGui::Dummy({0.f, 4.f});

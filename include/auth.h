@@ -1,7 +1,9 @@
 /*
+ * auth.h
  * Auth Layer — StructForce Contact Management System
- * User accounts, password hashing, binary file persistence
- * Included by presentation.h; never by data.h or logic.h
+ *
+ * User accounts, password hashing, binary file persistence.
+ * Included by presentation.h; never by data.h or logic.h.
  */
 
 #pragma once

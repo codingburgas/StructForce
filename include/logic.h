@@ -22,15 +22,15 @@
 
 #include "data.h"
 
- //Enumerations 
+//Enumerations 
 
 enum SortField {
-    SORT_BY_NAME = 0,
+    SORT_BY_NAME  = 0,
     SORT_BY_PHONE = 1
 };
 
 enum SortOrder {
-    SORT_ASC = 0,
+    SORT_ASC  = 0,
     SORT_DESC = 1
 };
 
@@ -60,16 +60,16 @@ void buildIndexArray(int* out, int n);
  *   order        — SORT_ASC or SORT_DESC
  */
 void quickSort(const ContactStore& store,
-    int* indices, int left, int right,
-    SortField field, SortOrder order);
+               int* indices, int left, int right,
+               SortField field, SortOrder order);
 
 /*
  * Convenience wrapper: build index array then sort it.
  * outIndices must have capacity >= store.count.
  */
 void getSortedIndices(const ContactStore& store,
-    int* outIndices,
-    SortField field, SortOrder order);
+                      int* outIndices,
+                      SortField field, SortOrder order);
 
 // ─── Searching ────────────────────────────────────────────────────────────────
 
@@ -119,16 +119,16 @@ const char* validateContact(const char* name, const char* phone);
  * Returns nullptr on success, or an error string on failure.
  */
 const char* addContactValidated(ContactStore& store,
-    const char* name,
-    const char* phone,
-    const char* email,
-    const char* group);
+                                const char* name,
+                                const char* phone,
+                                const char* email,
+                                const char* group);
 
 const char* updateContactValidated(ContactStore& store, int id,
-    const char* name,
-    const char* phone,
-    const char* email,
-    const char* group);
+                                   const char* name,
+                                   const char* phone,
+                                   const char* email,
+                                   const char* group);
 
 /*
  * Delete a contact by id via the data layer.
